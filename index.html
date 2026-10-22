@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="ko">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>
+    네컷의 온도
+  </title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
+    
+    :root {
+      --ink: #252721;
+      --paper: #f6f5ee;
+      --line: #dedfd4;
+      --lime: #d5f578
+    }
+    
+    * {
+      box-sizing: border-box
+    }
+    
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 14px
+    }
+    
+    body:before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23777' opacity='.2' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E")
+    }
+    
+    button,
+    input {
+      font: inherit
+    }
+    
+    button {
+      cursor: pointer;
+      color: inherit
+    }
+    
+    header {
+      max-width: 1400px;
+      margin: auto;
+      padding: 25px 5%;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      align-items: center
+    }
+    
+    .brand {
+      font-weight: 900;
+      font-size: 21px;
+      letter-spacing: -1px
+    }
+    
+    .brand span {
+      display: inline-block;
+      background: var(--lime);
+      border: 1.5px solid;
+      padding: 0 5px;
+      transform: rotate(-7deg);
+      margin-right: 8px
+    }
+    
+    header small {
+      font-size: 10px;
+      letter-spacing: 2px
+    }
+    
+    main {
+      max-width: 1260px;
+      margin: auto;
+      padding: 38px 30px
+    }
+    
+    .intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px
+    }
+    
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 2px;
+      font-weight: 700
+    }
+    
+    h1 {
+      font-size: 42px;
+      letter-spacing: -2.6px;
+      line-height: 1.35;
+      margin: 10px 0
+    }
+    
+    h1 em {
+      font-style: normal;
+      position: relative;
+      z-index: 1
+    }
+    
+    h1 em:after {
+      content: '';
+      position: absolute;
+      height: 14px;
+      background: var(--lime);
+      bottom: 1px;
+      left: 0;
+      right: 0;
+      z-index: -1;
+      transform: rotate(-2deg)
+    }
+    
+    .sub {
+      color: #74776b;
+      font-size: 13px
+    }
+    
+    .stamp {
+      border: 1px solid #a8ad96;
+      border-radius: 50%;
+      width: 96px;
+      height: 96px;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      transform: rotate(12deg);
+      font-size: 12px;
+      line-height: 1.8;
+      margin-right: 25px
+    }
+    
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 26px;
+      align-items: start
+    }
+    
+    .panel {
+      border: 1px solid var(--line);
+      background: #fffefa;
+      border-radius: 18px;
+      padding: 25px
+    }
+    
+    .steps {
+      display: flex;
+      gap: 14px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 19px;
+      margin-bottom: 23px;
+      font-size: 12px
+    }
+    
+    .steps b {
+      background: var(--ink);
+      color: white;
+      border-radius: 50%;
+      padding: 3px 7px;
+      margin-right: 5px
+    }
+    
+    .steps span {
+      color: #888d7c
+    }
+    
+    h2 {
+      font-size: 15px;
+      margin: 0 0 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+    
+    h2 small {
+      font-size: 10px;
+      color: #96998c;
+      font-weight: 400
+    }
+    
+    .uploads {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px
+    }
+    
+    .upload {
+      aspect-ratio: .83;
+      border: 1px dashed #bfc5b1;
+      background: #f8f9f1;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      cursor: pointer;
+      font-size: 11px;
+      color: #717866
+    }
+    
+    .upload strong {
+      font-size: 26px;
+      font-weight: 400;
+      display: block
+    }
+    
+    .upload img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+    
+    .upload .num {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      background: #fff9;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-content: center;
+      font-size: 10px;
+      color: #222
+    }
+    
+    .hint {
+      font-size: 10px;
+      color: #999d8e;
+      margin: 10px 0 24px
+    }
+    
+    .section {
+      border-top: 1px solid var(--line);
+      padding-top: 21px;
+      margin-top: 21px
+    }
+    
+    .choices {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+    
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 9px 13px;
+      font-size: 12px
+    }
+    
+    .chip.active {
+      border-color: var(--ink);
+      background: var(--lime);
+      box-shadow: 0 0 0 1px var(--ink)
+    }
+    
+    .swatch {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: 3px solid white;
+      outline: 1px solid #dedfd4
+    }
+    
+    .swatch.active {
+      outline: 2px solid #353a29
+    }
+    
+    .colorline {
+      display: flex;
+      align-items: center;
+      gap: 11px
+    }
+    
+    .colorline span {
+      font-size: 11px;
+      margin-left: 5px;
+      color: #858977
+    }
+    
+    .textrow {
+      display: flex;
+      gap: 8px
+    }
+    
+    input[type=text] {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #f8f9f3;
+      border-radius: 8px;
+      padding: 11px;
+      color: var(--ink);
+      outline-color: #99ae57
+    }
+    
+    .stickers button {
+      background: #f5f6ee;
+      border: 1px solid var(--line);
+      font-size: 25px;
+      border-radius: 9px;
+      width: 45px;
+      height: 45px
+    }
+    
+    .smallbtn {
+      border: 0;
+      background: transparent;
+      font-size: 10px;
+      text-decoration: underline;
+      color: #7b806f
+    }
+    
+    .previewpanel {
+      background: #e9eddf;
+      border-radius: 18px;
+      border: 1px solid #dce1d0;
+      padding: 20px 28px 23px;
+      position: sticky;
+      top: 20px;
+      background-image: linear-gradient(#fff4 1px, transparent 1px), linear-gradient(90deg, #fff4 1px, transparent 1px);
+      background-size: 23px 23px
+    }
+    
+    .previewhead {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 1px;
+      margin-bottom: 17px
+    }
+    
+    .live {
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+    
+    .live:before {
+      content: '';
+      height: 6px;
+      width: 6px;
+      border-radius: 50%;
+      background: #78984a
+    }
+    
+    .canvaswrap {
+      width: 230px;
+      margin: auto;
+      position: relative;
+      box-shadow: 5px 13px 24px #303d2228;
+      transform: rotate(0deg);
+      touch-action: none
+    }
+    
+    canvas {
+      width: 100%;
+      display: block
+    }
+    
+    .tape {
+      width: 89px;
+      height: 24px;
+      background: #ece3c8b0;
+      position: absolute;
+      top: -10px;
+      left: 70px;
+      transform: rotate(5deg);
+      z-index: 2;
+      pointer-events: none
+    }
+    
+    .download {
+      background: var(--ink);
+      color: white;
+      border: 0;
+      border-radius: 10px;
+      width: 100%;
+      padding: 15px;
+      margin-top: 24px;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      justify-content: center;
+      gap: 16px
+    }
+    
+    .download:hover {
+      background: #424b30
+    }
+    
+    .status {
+      text-align: center;
+      font-size: 10px;
+      color: #777e6d;
+      min-height: 16px;
+      margin-top: 10px
+    }
+    
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      padding: 28px 0;
+      font-size: 10px;
+      color: #999c90;
+      border-top: 1px solid var(--line);
+      margin-top: 32px
+    }
+    
+    .selectedsticker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 11px
+    }
+    
+    input[type=range] {
+      width: 110px;
+      accent-color: #788c44
+    }
+    
+    .camera-note {
+      font-size: 11px;
+      color: #7c826f;
+      margin-top: 14px
+    }
+    
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px
+    }
+    
+    button:focus-visible,
+    .upload:focus-within {
+      outline: 3px solid #8fa945;
+      outline-offset: 3px
+    }
+    
+    @media(max-width:850px) {
+      .workspace {
+        grid-template-columns: 1fr 330px;
+        gap: 15px
+      }
+    
+      main {
+        padding: 25px 18px
+      }
+    
+      .panel {
+        padding: 18px
+      }
+    
+      h1 {
+        font-size: 35px
+      }
+    
+      .steps {
+        gap: 8px;
+        font-size: 10px
+      }
+    
+      .previewpanel {
+        padding: 20px
+      }
+    }
+    
+    @media(max-width:680px) {
+      header {
+        padding: 20px
+      }
+    
+      .stamp {
+        display: none
+      }
+    
+      header small {
+        font-size: 8px;
+        letter-spacing: 1px
+      }
+    
+      .workspace {
+        grid-template-columns: 1fr
+      }
+    
+      .previewpanel {
+        position: static;
+        grid-row: 2
+      }
+    
+      .intro {
+        margin-bottom: 24px
+      }
+    
+      h1 {
+        font-size: 34px
+      }
+    
+      .canvaswrap {
+        width: 230px
+      }
+    
+      .uploads {
+        gap: 8px
+      }
+    
+      .sub {
+        font-size: 12px
+      }
+    
+      .foot {
+        line-height: 1.8;
+        gap: 20px
+      }
+    }
+  </style>
+  <header>
+    <div class="brand">
+      <span>
+        ▦
+      </span>
+      네컷의 온도
+    </div>
+    <small>
+      YOUR LITTLE PHOTO STUDIO
+    </small>
+  </header>
+  <main>
+    <div class="intro">
+      <div>
+        <div class="eyebrow">
+          
+        </div>
+        <h1>
+          지금 이 순간을,
+          <br>
+          <em>
+            네 컷에 담아요.
+          </em>
+        </h1>
+        <div class="sub">
+          평범한 하루도 특별한 기록으로. 나만의 작은 포토 스튜디오.
+        </div>
+      </div>
+      <div class="stamp">
+        ✳
+        <br>
+        MADE OF
+        <br>
+        little moments
+      </div>
+    </div>
+    <div class="workspace">
+      <section class="panel">
+        <div class="steps">
+          <div>
+            <b>
+              1
+            </b>
+            사진 담기
+          </div>
+          <span>
+            →
+          </span>
+          <div>
+            <b>
+              2
+            </b>
+            나답게 꾸미기
+          </div>
+          <span>
+            →
+          </span>
+          <div>
+            <b>
+              3
+            </b>
+            추억 저장
+          </div>
+        </div>
+        <h2>
+          오늘의 네 장
+          <small id="count">
+            0 / 4 PHOTOS
+          </small>
+        </h2>
+        <div class="uploads" id="uploads">
+        </div>
+        <div class="toolbar">
+          <button class="smallbtn" id="batch">
+            사진 여러 장 한 번에 넣기
+          </button>
+          <button class="smallbtn" id="reset">
+            전체 초기화
+          </button>
+        </div>
+        <p class="hint">
+          사진을 누르면 교체할 수 있어요. 사진은 기기 안에서만 처리됩니다.
+        </p>
+        <h2>
+          분위기를 더하는 필터
+          <small>
+            PHOTO FILTER
+          </small>
+        </h2>
+        <div class="choices" id="filters">
+        </div>
+        <div class="section">
+          <h2>
+            프레임 컬러
+            <small>
+              PICK YOUR MOOD
+            </small>
+          </h2>
+          <div class="colorline" id="colors">
+          </div>
+        </div>
+        <div class="section">
+          <h2>
+            우리만의 한마디
+            <small>
+              FRAME MESSAGE
+            </small>
+          </h2>
+          <input type="text" id="caption" maxlength="32" value="오늘도, 우리답게" aria-label="프레임 문구" placeholder="기억하고 싶은 문구를 적어주세요">
+          <div class="choices" style="margin-top:10px">
+            <label style="font-size:11px;color:#838875">
+              <input type="checkbox" id="date" checked>
+              오늘 날짜 표시
+            </label>
+          </div>
+        </div>
+        <div class="section">
+          <h2>
+            작은 포인트, 스티커
+            <button class="smallbtn" id="clearstickers">
+              모두 지우기
+            </button>
+          </h2>
+          <div class="choices stickers" id="stickers">
+          </div>
+          <div class="selectedsticker">
+            <span>
+              스티커 크기
+            </span>
+            <input id="size" aria-label="선택한 스티커 크기" type="range" min="30" max="110" value="65">
+            <button class="smallbtn" id="deleteSticker">
+              선택 삭제
+            </button>
+          </div>
+          <p class="hint" style="margin-bottom:0">
+            스티커를 추가한 뒤 미리보기에서 끌어 옮겨보세요.
+          </p>
+        </div>
+      </section>
+      <aside class="previewpanel">
+        <div class="previewhead">
+          <span>
+            YOUR FOUR MOMENTS
+          </span>
+          <span class="live">
+            LIVE PREVIEW
+          </span>
+        </div>
+        <div class="canvaswrap">
+          <div class="tape">
+          </div>
+          <canvas id="canvas" width="720" height="1940" aria-label="인생4컷 미리보기">
+          </canvas>
+        </div>
+        <button class="download" id="download">
+          ↓
+          <span>
+            네 컷 다운로드
+          </span>
+          <span style="font-weight:400;opacity:.5">
+            PNG
+          </span>
+        </button>
+        <div class="status" id="status" role="status">
+          사진 네 장을 담아 추억을 완성해보세요
+        </div>
+      </aside>
+    </div>
+    <footer class="foot">
+      <span>
+        네컷의 온도 © 2026
+        <br>
+        A LITTLE SPACE FOR YOUR MEMORIES.
+      </span>
+      <span>
+        네 장의 사진, 하나의 이야기. ✳
+        <br>
+        사진은 서버에 업로드되지 않아요.
+      </span>
+    </footer>
+  </main>
+  <input type="file" id="file" accept="image/*" hidden>
+  <input type="file" id="files" accept="image/*" multiple hidden>
+  <script>
+    const $ = s => document.querySelector(s),
+      canvas = $('#canvas'),
+      ctx = canvas.getContext('2d');
+    let photos = [null, null, null, null],
+      slot = 0,
+      filter = '오리지널',
+      color = '#fffdf5',
+      stickers = [],
+      selected = -1;
+    const filters = {
+      '오리지널': 'none',
+      '소프트': 'brightness(1.08) saturate(.75) contrast(.93)',
+      '빈티지': 'sepia(.45) saturate(.75) contrast(.92)',
+      '흑백': 'grayscale(1) contrast(1.08)',
+      '핑크빛': 'sepia(.16) saturate(1.3) hue-rotate(320deg)',
+      '선명하게': 'saturate(1.35) contrast(1.12)'
+    };
+    let sample = false;
+    for (let i = 0; i < 4; i++) {
+      const b = document.createElement('button');
+      b.className = 'upload';
+      b.setAttribute('aria-label', `${i+1}번째 사진 선택`);
+      b.innerHTML = `<div><strong>＋</strong>사진 담기</div><span class="num">0${i+1}</span>`;
+      b.onclick = () => {
+        slot = i;
+        $('#file').click()
+      };
+      $('#uploads').append(b)
+    }
+    Object.keys(filters).forEach(f => {
+      let b = document.createElement('button');
+      b.className = 'chip' + (f === filter ? ' active' : '');
+      b.textContent = f;
+      b.onclick = () => {
+        filter = f;
+        document.querySelectorAll('#filters button').forEach(e => e.classList.toggle('active', e === b));
+        draw()
+      };
+      $('#filters').append(b)
+    });
+    ['#fffdf5', '#252a29', '#dce6d5', '#f1cbd5', '#cfdaed', '#d5f578'].forEach((c, i) => {
+      let b = document.createElement('button');
+      b.className = 'swatch' + (!i ? ' active' : '');
+      b.style.background = c;
+      b.setAttribute('aria-label', ['크림', '차콜', '세이지', '핑크', '블루', '라임'][i] + ' 프레임');
+      b.onclick = () => {
+        color = c;
+        document.querySelectorAll('.swatch').forEach(e => e.classList.toggle('active', e === b));
+        draw()
+      };
+      $('#colors').append(b)
+    });
+    ['🌼', '💗', '✨', '🍀', '🎀', '🦋', '⭐', '🍒'].forEach(s => {
+      let b = document.createElement('button');
+      b.textContent = s;
+      b.setAttribute('aria-label', s + ' 스티커 추가');
+      b.onclick = () => {
+        if (stickers.length >= 30) {
+          status('스티커는 최대 30개까지 추가할 수 있어요');
+          return
+        }
+        stickers.push({
+          s,
+          x: 580 + Math.random() * 60,
+          y: 200 + Math.random() * 1400,
+          size: +$('#size').value
+        });
+        selected = stickers.length - 1;
+        draw()
+      };
+      $('#stickers').append(b)
+    });
+    
+    function status(t) {
+      $('#status').textContent = t
+    }
+    
+    function draw() {
+      ctx.filter = 'none';
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 720, 1940);
+      const dark = color === '#252a29';
+      for (let i = 0; i < 4; i++) {
+        let x = 40,
+          y = 48 + i * 414,
+          w = 640,
+          h = 390;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, y, w, h);
+        ctx.clip();
+        if (photos[i]) {
+          let im = photos[i],
+            scale = Math.max(w / im.width, h / im.height);
+          ctx.filter = filters[filter];
+          ctx.drawImage(im, x + (w - im.width * scale) / 2, y + (h - im.height * scale) / 2, im.width * scale, im.height * scale)
+        } else {
+          let g = ctx.createLinearGradient(x, y, x + w, y + h);
+          g.addColorStop(0, ['#dce3c9', '#edcbbd', '#cbd9d4', '#e2d7e9'][i]);
+          g.addColorStop(1, ['#b5c19e', '#d5b6a6', '#a5bdb3', '#c4b6d0'][i]);
+          ctx.fillStyle = g;
+          ctx.fillRect(x, y, w, h);
+          ctx.fillStyle = '#ffffff35';
+          ctx.beginPath();
+          ctx.arc(490, y + 115, 160, 0, 7);
+          ctx.fill();
+          ctx.fillStyle = '#ffffff55';
+          ctx.font = '80px Georgia';
+          ctx.textAlign = 'center';
+          ctx.fillText(['✳', '♡', '✧', '☀'][i], 360, y + 180);
+          ctx.font = '16px sans-serif';
+          ctx.fillStyle = '#39432e80';
+          ctx.fillText('YOUR MOMENT 0' + (i + 1), 360, y + 240)
+        }
+        ctx.restore()
+      }
+      ctx.fillStyle = dark ? '#f5f4e9' : '#343b2c';
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 35px sans-serif';
+      ctx.fillText($('#caption').value, 360, 1770, 640);
+      ctx.font = '16px sans-serif';
+      ctx.fillText($('#date').checked ? new Date().toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }) : 'MADE OF LITTLE MOMENTS', 360, 1820);
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('네컷의 온도   ✳   FOUR MOMENTS', 360, 1895);
+      stickers.forEach((s, i) => {
+        ctx.font = s.size + 'px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(s.s, s.x, s.y);
+        if (i === selected) {
+          ctx.strokeStyle = '#819548';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([7, 5]);
+          ctx.strokeRect(s.x - s.size * .6, s.y - s.size * .6, s.size * 1.2, s.size * 1.2);
+          ctx.setLineDash([])
+        }
+      });
+      ctx.textBaseline = 'alphabetic';
+      $('#count').textContent = photos.filter(Boolean).length + ' / 4 PHOTOS'
+    }
+    async function load(file, i) {
+      if (!file) return;
+      try {
+        if (!file.type.startsWith('image/')) throw Error();
+        const url = URL.createObjectURL(file),
+          im = new Image();
+        await new Promise((res, rej) => {
+          im.onload = res;
+          im.onerror = rej;
+          im.src = url
+        });
+        URL.revokeObjectURL(url);
+        let off = document.createElement('canvas'),
+          scale = Math.min(1, 2000 / Math.max(im.width, im.height));
+        off.width = Math.round(im.width * scale);
+        off.height = Math.round(im.height * scale);
+        off.getContext('2d').drawImage(im, 0, 0, off.width, off.height);
+        photos[i] = off;
+        let b = $('#uploads').children[i],
+          old = b.querySelector('img');
+        if (old) old.remove();
+        let thumb = document.createElement('img');
+        thumb.src = off.toDataURL('image/jpeg', .8);
+        thumb.alt = (i + 1) + '번째 사진';
+        b.prepend(thumb);
+        status('사진을 담았어요. 필터와 스티커로 꾸며보세요');
+        draw()
+      } catch (e) {
+        status('사진을 열 수 없어요. JPG 또는 PNG 파일을 선택해주세요')
+      }
+    }
+    $('#file').onchange = async e => {
+      await load(e.target.files[0], slot);
+      e.target.value = ''
+    };
+    $('#batch').onclick = () => $('#files').click();
+    $('#files').onchange = async e => {
+      const fs = [...e.target.files].slice(0, 4);
+      for (let i = 0; i < fs.length; i++) await load(fs[i], i);
+      e.target.value = ''
+    };
+    $('#caption').oninput = draw;
+    $('#date').onchange = draw;
+    $('#clearstickers').onclick = () => {
+      stickers = [];
+      selected = -1;
+      draw()
+    };
+    $('#deleteSticker').onclick = () => {
+      if (selected >= 0) stickers.splice(selected, 1);
+      selected = -1;
+      draw()
+    };
+    $('#size').oninput = () => {
+      if (selected >= 0) {
+        stickers[selected].size = +$('#size').value;
+        draw()
+      }
+    };
+    let drag = false,
+      offset = {
+        x: 0,
+        y: 0
+      };
+    
+    function point(e) {
+      let r = canvas.getBoundingClientRect();
+      return {
+        x: (e.clientX - r.left) * 720 / r.width,
+        y: (e.clientY - r.top) * 1940 / r.height
+      }
+    }
+    canvas.onpointerdown = e => {
+      let p = point(e);
+      selected = stickers.findLastIndex(s => Math.abs(s.x - p.x) < s.size * .65 && Math.abs(s.y - p.y) < s.size * .65);
+      if (selected >= 0) {
+        drag = true;
+        offset = {
+          x: p.x - stickers[selected].x,
+          y: p.y - stickers[selected].y
+        };
+        $('#size').value = stickers[selected].size;
+        canvas.setPointerCapture(e.pointerId)
+      }
+      draw()
+    };
+    canvas.onpointermove = e => {
+      if (!drag) return;
+      let p = point(e),
+        s = stickers[selected];
+      s.x = Math.max(0, Math.min(720, p.x - offset.x));
+      s.y = Math.max(0, Math.min(1940, p.y - offset.y));
+      draw()
+    };
+    canvas.onpointerup = canvas.onpointercancel = () => drag = false;
+    $('#download').onclick = () => {
+      if (photos.some(x => !x)) {
+        status('먼저 사진 네 장을 모두 넣어주세요');
+        return
+      }
+      let prev = selected;
+      selected = -1;
+      draw();
+      canvas.toBlob(blob => {
+        selected = prev;
+        draw();
+        if (!blob) {
+          status('저장에 실패했어요. 다시 시도해주세요');
+          return
+        }
+        let url = URL.createObjectURL(blob),
+          a = document.createElement('a');
+        a.href = url;
+        a.download = '네컷의온도_' + new Date().toISOString().slice(0, 10) + '.png';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        status('완성! 720 × 1940 PNG 이미지로 저장했어요')
+      }, 'image/png')
+    };
+    $('#reset').onclick = () => {
+      if (!confirm('사진과 꾸미기를 모두 초기화할까요?')) return;
+      photos = [null, null, null, null];
+      stickers = [];
+      selected = -1;
+      document.querySelectorAll('.upload img').forEach(e => e.remove());
+      $('#caption').value = '오늘도, 우리답게';
+      $('#date').checked = true;
+      document.querySelector('#filters button').click();
+      document.querySelector('#colors button').click();
+      status('새로운 네 컷을 시작해보세요');
+      draw()
+    };
+    draw();
+    document.fonts.ready.then(draw);
+  </script>
+</html>
